@@ -1,6 +1,21 @@
 import os
 import sys
 
+
+def move(x, y, state):
+    for row in state:
+        for col in row:
+            if col == 0:
+                prev = state[y][x]
+                state[y][x] = col
+                col = prev
+
+class State:
+    def __init__(self, both, kids):
+        self.both = both
+        self.kids = self.val = kids
+
+
 if __name__ == "__main__":
     if len(sys.argv) != 2 or not os.path.exists(sys.argv[1]):
         print("Usage: python3 npuzzle.py map.txt")
