@@ -2,15 +2,20 @@ import os
 import sys
 import argparse
 
+n = 3
+
 
 class State:
-    def __init__(self, both, kids, bones):
-        self.both = both
-        self.kids = kids
+    def __init__(self, parent, bones, x, y, g, theta):
+        self.parent = parent
         self.bones = bones
+        self.g = 0
         self.theta = 0
+        self.x = x
+        self.y = y
 
 
+end_state = State(None, None, 0, 0)
 
 if __name__ == "__main__":
 
