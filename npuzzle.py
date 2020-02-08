@@ -2,6 +2,9 @@ import os
 import argparse
 
 
+# [[False] * C for _ in matrix]
+
+
 def spiral_matrix(n):
     m = [[0] * n for _ in range(n)]
     dx, dy = [0, 1, 0, -1], [1, 0, -1, 0]
@@ -20,8 +23,8 @@ class State:
     def __init__(self, parent, bones, x, y, g, theta):
         self.parent = parent
         self.bones = bones
-        self.g = 0
-        self.theta = 0
+        self.g = g
+        self.theta = theta
         self.x = x
         self.y = y
 
