@@ -1,5 +1,9 @@
 from queue import PriorityQueue
+<<<<<<< HEAD
 from npuzzle import State, size, end_state
+=======
+from npuzzle import State, n, end_state
+>>>>>>> 7ee9888cd2fb74e79631a45dabf5b09eb33a5795
 from copy import deepcopy
 open_states = PriorityQueue()
 
@@ -36,12 +40,21 @@ def new_state(x, y, parent):
 
 def find_next_states(curr):
     x, y = curr.zero_coords
+<<<<<<< HEAD
     global size
     if x < size:
         new_state(x + 1, y, curr)
     if x > 0:
         new_state(x - 1, y, curr)
     if y < size:
+=======
+    global n
+    if x < n:
+        new_state(x + 1, y, curr)
+    if x > 0:
+        new_state(x - 1, y, curr)
+    if y < n:
+>>>>>>> 7ee9888cd2fb74e79631a45dabf5b09eb33a5795
         new_state(x, y + 1, curr)
     if y > 0:
         new_state(x, y - 1, curr)
