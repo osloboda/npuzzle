@@ -1,6 +1,6 @@
 import os
 import argparse
-
+from algorythm import *
 
 # [[False] * C for _ in matrix]
 
@@ -15,18 +15,26 @@ def spiral_matrix(n):
             y += dy[i % 4]
             m[x][y] = c
             c += 1
-    m[n * n == n * n][n * n == n * n] = 0
+    for row in m:
+        if n * n in row:
+            row[row.index(n*n)] = 0
+
     return m
 
 
 class State:
-    def __init__(self, parent, bones, x, y, g, theta):
+    def __init__(self, parent, bones, h, x, y):
         self.parent = parent
         self.bones = bones
-        self.g = g
-        self.theta = theta
+        self.h = h
         self.x = x
         self.y = y
+
+    def get_bone_coords(self, bone):
+        for y in self.bones:
+            for x in self.bones[y]:
+                if self.bones[y][x] == bone:
+                    return y, x
 
 
 if __name__ == "__main__":
@@ -49,9 +57,8 @@ if __name__ == "__main__":
                 data.append(subdata)
     size = data[0][0]
     data.remove(data[0])
-    print(size, '\n', data)
-
-    end_state = State(None, spiral_matrix(size), 0, 0, 0, 0)
-
-    print(end_state.bones)
+    # print(size, '\n', data)
+    end_state = State(None, spiral_matrix(size), 0, 0, 0)
+    # print(str(end_state.bones))
+    run(data)
 
