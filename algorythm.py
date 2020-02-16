@@ -3,6 +3,15 @@ from copy import deepcopy
 from State import *
 
 
+def other_heuristics(bones1, bones2):
+    i = 0
+    for r1, r2 in zip(bones1, bones2):
+        for c1, c2 in zip(r1, r2):
+            if c1 != c2:
+                i += 1
+    return i
+
+
 def manhattan_dist(x1, y1, x2, y2):
     return abs(x1 - x2) + abs(y1 - y2)
 
@@ -40,7 +49,7 @@ class Eval:
         new_bones[y][x] = 0
         return new_bones
 
-    def new_state(self, x, y, parent, g, parent_h):
+    def new_state(self, x, y, parent, g):
         bones = self.move(parent, x, y)
         if hash(str(bones)) in self.closed_states:
             return
@@ -50,15 +59,14 @@ class Eval:
 
     def find_next_states(self, curr):
         x, y = curr.x, curr.y
-        curr_bone_h = self.count_dist(x, y, curr.bones[y][x])
         if x < self.size - 1:
-            self.new_state(x + 1, y, curr, curr.g + 1, curr_bone_h)
+            self.new_state(x + 1, y, curr, curr.g + 1)
         if x > 0:
-            self.new_state(x - 1, y, curr, curr.g + 1, curr_bone_h)
+            self.new_state(x - 1, y, curr, curr.g + 1)
         if y < self.size - 1:
-            self.new_state(x, y + 1, curr, curr.g + 1, curr_bone_h)
+            self.new_state(x, y + 1, curr, curr.g + 1)
         if y > 0:
-            self.new_state(x, y - 1, curr, curr.g + 1, curr_bone_h)
+            self.new_state(x, y - 1, curr, curr.g + 1)
 
     def main_cycle(self):
         i = 0
@@ -74,7 +82,7 @@ class Eval:
 
     def run(self, start_bones):
         start = State(None, start_bones, 0, 0, 0, 0)
-        start.x, start.y = get_bone_coords(start.bones, 0)
+        start.y, start.x = get_bone_coords(start.bones, 0)
         start.h = self.total_dist(start.bones)
         start.theta = start.h
         print(start.h)
