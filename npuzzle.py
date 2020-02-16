@@ -43,6 +43,16 @@ if __name__ == "__main__":
                 data.append(subdata)
     size = data[0][0]
     data.remove(data[0])
-    eval = Eval(size, State(None, spiral_matrix(size), 0, 0, 0, 0))
-    print(spiral_matrix(size))
+    end = spiral_matrix(size)
+    copy = np.array(data).flatten().tolist()
+    for i in range(size * size):
+        try:
+            copy.remove(i)
+        except:
+            pass
+    if copy:
+        print("Invalid map!")
+        exit()
+    eval = Eval(size, State(None, end, 0, 0, 0, 0))
+    print(end)
     eval.run(data)

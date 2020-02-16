@@ -1,6 +1,7 @@
 from queue import PriorityQueue
 from copy import deepcopy
 from State import *
+import numpy as np
 
 
 def other_heuristics(bones1, bones2):
@@ -22,10 +23,31 @@ class Eval:
         self.end_state = end_state
         self.open_states = PriorityQueue()
         self.closed_states = set()
+        self.tendstate = None
         self.end_coords = [get_bone_coords(self.end_state.bones, i) for i in range(1, self.size ** 2)]
 
+    def linear_conflict(self, bones1):
+        i = 0
+
+        for r1, r2 in zip(bones1, self.end_state.bones):
+            for c1, c2 in zip(r1, r2):
+                for _1, _2 in zip(r1, r2):
+                    if c1 in r2 and _1 in r2:
+                        if r2.index(c1) > r2.index(_1) and r1.index(c1) < r1.index(_1) or r2.index(c1) < r2.index(
+                                _1) and r1.index(c1) > r1.index(_1):
+                            i += 2
+        tbones1 = np.array(bones1).T.tolist()
+        for r1, r2 in zip(tbones1, self.tendstate):
+            for c1, c2 in zip(r1, r2):
+                for _1, _2 in zip(r1, r2):
+                    if c1 in r2 and _1 in r2:
+                        if r2.index(c1) > r2.index(_1) and r1.index(c1) < r1.index(_1) or r2.index(c1) < r2.index(
+                                _1) and r1.index(c1) > r1.index(_1):
+                            i += 2
+        return i
+
     def count_distance(self, state, bone):
-        y, x = get_bone_coords(state.bones, bone)
+        y, x = et_bone_coords(state.bones, bone)
         new_y, new_x = get_bone_coords(self.end_state.bones, bone)
         return manhattan_dist(x, y, new_x, new_y)
 
@@ -53,7 +75,8 @@ class Eval:
         bones = self.move(parent, x, y)
         if hash(str(bones)) in self.closed_states:
             return
-        h = self.total_dist(bones)
+        h = self.total_dist(bones)# + self.linear_conflict(bones)
+        # h = linear_conflict(bones, self.end_state.bones)
         kid = State(parent, self.move(parent, x, y), g, h, x, y)
         self.open_states.put((kid.theta, id(kid), kid))
 
@@ -81,6 +104,7 @@ class Eval:
         print(i)
 
     def run(self, start_bones):
+        self.tendstate = np.array(self.end_state.bones).T.tolist()
         start = State(None, start_bones, 0, 0, 0, 0)
         start.y, start.x = get_bone_coords(start.bones, 0)
         start.h = self.total_dist(start.bones)
