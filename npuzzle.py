@@ -26,11 +26,13 @@ def spiral_matrix(n):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get arguments')
     parser.add_argument('-f', action='store', dest='f', help='Input file name')
+    parser.add_argument('-e', action='store', dest='e', help='Heuristic (linear, manhattan, mini_e)')
+    parser.add_argument('-s', action='store_true', default=False, help='Show statistic')
     args = parser.parse_args()
 
     if not args.f or not os.path.exists(args.f):
-        print("usage: npuzzle.py [-h] [-f] \n positional arguments:  -f     Input file name"
-              " \n\noptional arguments: -h for help")
+        print("usage: npuzzle.py [-h, -s] [-f, -e] \npositional arguments:  -f     Input file name\n                       -e     Heuristic name (linear, manhattan, mini_e)"
+              " \n\noptional arguments:    -h     Help\n                       -s     Show statistic")
         exit()
     data = []
     with open(args.f) as f:
@@ -53,6 +55,7 @@ if __name__ == "__main__":
     if copy:
         print("Invalid map!")
         exit()
-    eval = Eval(size, State(None, end, 0, 0, 0, 0))
-    print(end)
+    eval = Eval(size, State(None, end, 0, 0, 0, 0,), args)
+    print('Start state:\n')
+    print('\n\n'.join(['\t'.join([str(cell) for cell in row]) for row in data]), '\n')
     eval.run(data)

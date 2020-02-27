@@ -18,12 +18,14 @@ def manhattan_dist(x1, y1, x2, y2):
 
 
 class Eval:
-    def __init__(self, size, end_state):
+    def __init__(self, size, end_state, args):
         self.size = size
         self.end_state = end_state
         self.open_states = PriorityQueue()
         self.closed_states = set()
         self.tendstate = None
+        self.args = args
+
         self.end_coords = [get_bone_coords(self.end_state.bones, i) for i in range(1, self.size ** 2)]
 
     def linear_conflict(self, bones1):
@@ -75,8 +77,12 @@ class Eval:
         bones = self.move(parent, x, y)
         if hash(str(bones)) in self.closed_states:
             return
-        h = self.total_dist(bones)# + self.linear_conflict(bones)
-        # h = linear_conflict(bones, self.end_state.bones)
+        if self.args.e == "linear":
+            h = self.total_dist(bones) + self.linear_conflict(bones)
+        elif self.args.e == "mini_e":
+            h = other_heuristics(bones, self.end_state.bones)
+        else:
+            h = self.total_dist(bones)
         kid = State(parent, self.move(parent, x, y), g, h, x, y)
         self.open_states.put((kid.theta, id(kid), kid))
 
@@ -97,11 +103,15 @@ class Eval:
             i += 1
             curr = self.open_states.get()[2]
             if curr.bones == self.end_state.bones:
-                print(curr.bones)
+                print("Finish state:\n")
+                print('\n\n'.join(['\t'.join([str(cell) for cell in row]) for row in curr.bones]), '\n')
                 break
+            if self.args.s:
+                print('\n\n'.join(['\t'.join([str(cell) for cell in row]) for row in curr.bones]), '\n', "------"*len(curr.bones))
             self.closed_states.add(hash(str(curr.bones)))
             self.find_next_states(curr)
-        print(i)
+
+        print("Iterations: ", i)
 
     def run(self, start_bones):
         self.tendstate = np.array(self.end_state.bones).T.tolist()
@@ -109,6 +119,5 @@ class Eval:
         start.y, start.x = get_bone_coords(start.bones, 0)
         start.h = self.total_dist(start.bones)
         start.theta = start.h
-        print(start.h)
         self.open_states.put((start.theta, id(start), start))
         self.main_cycle()
